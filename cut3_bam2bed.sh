@@ -1,5 +1,5 @@
 #!/bin/bash
-## bam to bed ##
+## File format conversion ##
 
 cat filenames | while read i; 
 do

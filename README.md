@@ -21,7 +21,7 @@ Execute the following command once to generate a permanently used index!
     nohup bowtie2-build /home/yangjiajun/downloads/genome/ecoil_U00096.3/ucsc_fa/GCF_000005845.2_ASM584v2_genomic.fa \
     /home/yangjiajun/downloads/genome/ecoil_U00096.3/bowtie2_idx/ecoil &
 
-mkdir bam bowtie2_summary picard_summary bedgraph
+mkdir bam bowtie2_summary picard_summary bedgraph SEACR
 
 ls raw/*1.fq.gz |cut -d "_" -f 1 |cut -d "/" -f 2 |cut -d "-" -f 4-5 > filenames
 
@@ -77,9 +77,23 @@ bedtools genomecov \
     -g /home/yangjiajun/downloads/genome/mm10_GRCm38/ucsc_fa/mm10.chrom.sizes > ./bedgraph/${i}_mm10_bowtie2.fragments.normalized.bedgraph
 
 
+##== linux command ==##
 
+bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CFA3-1_mm10_bowtie2.fragments.normalized.bedgraph \
+     ./bedgraph/CFA3-B1_mm10_bowtie2.fragments.normalized.bedgraph \
+     non stringent ./SEACR/CFA3-1_seacr_control.peaks &
 
+bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CFA3-2_mm10_bowtie2.fragments.normalized.bedgraph \
+     ./bedgraph/CFA3-B1_mm10_bowtie2.fragments.normalized.bedgraph \
+     non stringent ./SEACR/CFA3-2_seacr_control.peaks &
 
+bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/NADCFA3-1_mm10_bowtie2.fragments.normalized.bedgraph \
+     ./bedgraph/CFA3-B1_mm10_bowtie2.fragments.normalized.bedgraph \
+     non stringent ./SEACR/NADCFA3-1_seacr_control.peaks &
+
+bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/NADCFA3-2_mm10_bowtie2.fragments.normalized.bedgraph \
+     ./bedgraph/CFA3-B1_mm10_bowtie2.fragments.normalized.bedgraph \
+     non stringent ./SEACR/NADCFA3-2_seacr_control.peaks &
 
 
 

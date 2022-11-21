@@ -1,6 +1,7 @@
-# CUT_tag
+# CUT&tag 
+The pipeline were based on https://yezhengstat.github.io/CUTTag_tutorial/index.html  
 
-## build envs  
+## 0. Build source used for CUT&tag  
     
     conda create -n cuttag  
     conda activate cuttag  
@@ -13,7 +14,7 @@
     conda install -c bioconda bowtie2
     conda install -c bioconda fastqc
 
-## Build the bowtie2 reference genome index (mm10 and ecoil)  
+## 0. Build the bowtie2 reference genome index (mm10 and ecoil)  
 
 Execute the following command once to generate a permanently used index!  
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-## mapping mm10 (bowtie2) ##
+## Alignment to mm10 ##
 
 mm10="/home/yangjiajun/downloads/genome/mm10_GRCm38/bowtie2_idx/mm10"
 

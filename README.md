@@ -34,8 +34,11 @@ Execute the following command once to generate a permanently used index!
     nohup bowtie2-build GCF_000005845.2_ASM584v2_genomic.fa \
     /home/yangjiajun/downloads/genome/ecoil_U00096.3/bowtie2_idx/ecoil &   
 
-## 1. Build the folder  
+----
+
+## 1. Activate the source and create the folder  
     
+    conda activate cuttag  
     mkdir bam bowtie2_summary picard_summary bedgraph SEACR
     
 ## 2. Write the filenames  

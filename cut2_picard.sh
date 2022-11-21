@@ -1,5 +1,5 @@
 #!/bin/bash
-## mark duplicates and remove duplicates ##
+## Remove duplicates ##
 
 mm10="/home/yangjiajun/downloads/genome/mm10_GRCm38/bowtie2_idx/mm10"
 

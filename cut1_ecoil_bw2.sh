@@ -1,5 +1,5 @@
 #!/bin/bash
-## mapping ecoil (bowtie2) ##
+## Alignment to spike-in genome for spike-in calibration ##
 
 spikeInRef="/home/yangjiajun/downloads/genome/ecoil_U00096.3/bowtie2_idx/ecoil"
 

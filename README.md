@@ -49,26 +49,137 @@ Execute the following command once to generate a permanently used index!
 ## 3.1.1 Alignment to mm10  
     
     bash cut1_mm10_bw2.sh
+    
+    #!/bin/bash
+    ## Alignment to mm10 ##
 
-## 3.1.2 Alignment to spike-in genome for spike-in calibration (ecoil)  
+    mm10="/home/yangjiajun/downloads/genome/mm10_GRCm38/bowtie2_idx/mm10"
+
+    cat filenames | while read i; 
+    do
+    nohup bowtie2 --end-to-end --very-sensitive --no-mixed --no-discordant --phred33 \
+    -I 10 -X 700 -p 8 -x ${mm10} \
+    -1 ./raw/BL6-TG-CUT-${i}_1.fq.gz \
+    -2 ./raw/BL6-TG-CUT-${i}_2.fq.gz \
+    -S ./bam/${i}_mm10_bowtie2.sam &> ./bowtie2_summary/${i}_mm10_bowtie2.txt &
+    done
+
+## 3.1.2 Alignment to spike-in genome for spike-in calibration (ecoil)   
     
     bash cut1_ecoil_bw2.sh
+    
+    #!/bin/bash
+    ## Alignment to spike-in genome for spike-in calibration ##
 
-## 3.3 Remove duplicates  
+    spikeInRef="/home/yangjiajun/downloads/genome/ecoil_U00096.3/bowtie2_idx/ecoil"
+
+    cat filenames | while read i; 
+    do
+    nohup bowtie2 --end-to-end --very-sensitive --no-overlap --no-dovetail --no-mixed --no-discordant --phred33 \
+    -I 10 -X 700 -p 8 -x ${spikeInRef} \
+    -1 ./raw/BL6-TG-CUT-${i}_1.fq.gz \
+    -2 ./raw/BL6-TG-CUT-${i}_2.fq.gz \
+    -S ./bam/${i}_ecoil_bowtie2.sam &> ./bowtie2_summary/${i}_ecoil_bowtie2.txt &
+    done
+
+## 3.2 Report sequencing mapping summary  
+
+## 3.2.1 Sequencing depth  
+R  
+
+## 3.2.2 Spike-in alignment  
+R  
+
+## 3.2.3 Summarize the alignment to mm10 and E.coli  
+R  
+
+## 3.2.4 Visualizing the sequencing depth and alignment results.  
+R  
+
+## 3.3 Remove duplicates   
     
     bash cut2_picard.sh
+    
+    #!/bin/bash
+    ## Remove duplicates ##
 
-## 3.4. Assess mapped fragment size distribution
+    cat filenames | while read i; 
+    do
+    ## Sort by coordinate
+    nohup picard SortSam -I ./bam/${i}_mm10_bowtie2.sam \
+    -O ./bam/${i}_bowtie2.sorted.sam \
+    -SO coordinate &&
+
+    ## mark duplicates
+    picard MarkDuplicates -I ./bam/${i}_bowtie2.sorted.sam \
+    -O ./bam/${i}_bowtie2.sorted.dupMarked.sam \
+    -M ./picard_summary/${i}_picard.dupMark.txt &&
+
+    ## remove duplicates
+    picard MarkDuplicates -I ./bam/${i}_bowtie2.sorted.sam \
+    -O ./bam/${i}_bowtie2.sorted.rmDup.sam \
+    --REMOVE_DUPLICATES true \
+    -M ./picard_summary/${i}_picard.rmDup.txt &
+    done
+
+R  
+
+## 3.4. Assess mapped fragment size distribution  
 
     bash cut34.sh
+    
+    #!/bin/bash
+
+    cat filenames | while read i; 
+    do
+    ## Extract the 9th column from the alignment sam file which is the fragment length
+    nohup samtools view \
+    -F 0x04 ./bam/${i}_mm10_bowtie2.sam | awk \
+    -F'\t' 'function abs(x){return ((x < 0.0) ? -x : x)} {print abs($9)}' | sort | uniq -c | awk \
+    -v OFS="\t" '{print $2, $1/2}' > ./fragmentLen/${i}_fragmentLen.txt &
+    done
+
+R  
+
+## 4.1 Filtering mapped reads by the mapping quality filtering  
+Nothing
 
 ## 4.2 File format conversion  
     
     bash cut3_bam2bed.sh
+    
+    #!/bin/bash
+    ## File format conversion ##
+
+    cat filenames | while read i; 
+    do
+    ## Filter and keep the mapped read pairs
+    nohup samtools view -bS -F 0x04 ./bam/${i}_mm10_bowtie2.sam > ./bam/${i}_mm10_bowtie2.mapped.bam &&
+
+    ## Convert into bed file format
+    bedtools bamtobed -i ./bam/${i}_mm10_bowtie2.mapped.bam -bedpe > ./bam/${i}_mm10_bowtie2.bed &&
+
+    ## Keep the read pairs that are on the same chromosome and fragment length less than 1000bp.
+    awk '$1==$4 && $6-$2 < 1000 {print $0}' ./bam/${i}_mm10_bowtie2.bed > ./bam/${i}_mm10_bowtie2.clean.bed &&
+
+    ## Only extract the fragment related columns
+    cut -f 1,2,6 ./bam/${i}_mm10_bowtie2.clean.bed | sort -k1,1 -k2,2n -k3,3n > ./bam/${i}_mm10_bowtie2.fragments.bed &
+    done
 
 ## 4.3 Assess replicate reproducibility  
     
     bash cut4.sh
+    
+    #!/bin/bash
+    ## Assess replicate reproducibility ##
+
+    cat filenames | while read i; 
+    do
+    ## We use the mid point of each fragment to infer which 500bp bins does this fragment belong to.
+    awk -v w=500 '{print $1, int(($2 + $3)/(2*w))*w + w/2}' ./bam/${i}_mm10_bowtie2.fragments.bed | sort -k1,1V -k2,2n | uniq -c | awk -v OFS="\t" '{print $2, $3, $1}' |  sort -k1,1V -k2,2n > ./bam/${i}_mm10_bowtie2.fragmentsCount.bin500.bed &
+    done
+
+R  
 
 ## 5.1 Scaling factor   
 
@@ -92,19 +203,19 @@ Execute the following command once to generate a permanently used index!
 
     bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CFA3-1_mm10_bowtie2.fragments.normalized.bedgraph \
          ./bedgraph/CFA3-B1_mm10_bowtie2.fragments.normalized.bedgraph \
-         non stringent ./SEACR/CFA3-1_seacr_control.peaks &
+         norm stringent ./SEACR/CFA3-1_seacr_control.peaks &
 
     bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CFA3-2_mm10_bowtie2.fragments.normalized.bedgraph \
          ./bedgraph/CFA3-B1_mm10_bowtie2.fragments.normalized.bedgraph \
-         non stringent ./SEACR/CFA3-2_seacr_control.peaks &
+         norm stringent ./SEACR/CFA3-2_seacr_control.peaks &
 
     bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/NADCFA3-1_mm10_bowtie2.fragments.normalized.bedgraph \
          ./bedgraph/CFA3-B1_mm10_bowtie2.fragments.normalized.bedgraph \
-         non stringent ./SEACR/NADCFA3-1_seacr_control.peaks &
+         norm stringent ./SEACR/NADCFA3-1_seacr_control.peaks &
 
     bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/NADCFA3-2_mm10_bowtie2.fragments.normalized.bedgraph \
          ./bedgraph/CFA3-B1_mm10_bowtie2.fragments.normalized.bedgraph \
-         non stringent ./SEACR/NADCFA3-2_seacr_control.peaks &
+         norm stringent ./SEACR/NADCFA3-2_seacr_control.peaks &
 
 
 

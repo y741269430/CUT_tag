@@ -40,7 +40,7 @@ Execute the following command once to generate a permanently used index!
 ## 1. Activate the source and create the folder  
     
     conda activate cuttag  
-    mkdir bam bowtie2_summary picard_summary bedgraph SEACR
+    mkdir bam bowtie2_summary picard_summary bedgraph SEACR fragmentLen
     
 ## 2. Write the filenames  
     
@@ -57,6 +57,10 @@ Execute the following command once to generate a permanently used index!
 ## 3.3 Remove duplicates  
     
     bash cut2_picard.sh
+
+## 3.4. Assess mapped fragment size distribution
+
+    bash cut34.sh
 
 ## 4.2 File format conversion  
     

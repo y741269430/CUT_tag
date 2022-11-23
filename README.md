@@ -48,7 +48,7 @@ Execute the following command once to generate a permanently used index!
 
 ## 3.1.1 Alignment to mm10  
     
-    bash cut1_mm10_bw2.sh
+    vim cut1_mm10_bw2.sh
     
     #!/bin/bash
     ## Alignment to mm10 ##
@@ -66,7 +66,7 @@ Execute the following command once to generate a permanently used index!
 
 ## 3.1.2 Alignment to spike-in genome for spike-in calibration (ecoil)   
     
-    bash cut1_ecoil_bw2.sh
+    vim cut1_ecoil_bw2.sh
     
     #!/bin/bash
     ## Alignment to spike-in genome for spike-in calibration ##
@@ -98,7 +98,7 @@ R
 
 ## 3.3 Remove duplicates   
     
-    bash cut2_picard.sh
+    vim cut2_picard.sh
     
     #!/bin/bash
     ## Remove duplicates ##
@@ -126,7 +126,7 @@ R
 
 ## 3.4. Assess mapped fragment size distribution  
 
-    bash cut34.sh
+    vim cut34.sh
     
     #!/bin/bash
 
@@ -146,7 +146,7 @@ Nothing
 
 ## 4.2 File format conversion  
     
-    bash cut3_bam2bed.sh
+    vim cut3_bam2bed.sh
     
     #!/bin/bash
     ## File format conversion ##
@@ -168,7 +168,7 @@ Nothing
 
 ## 4.3 Assess replicate reproducibility  
     
-    bash cut4.sh
+    vim cut4.sh
     
     #!/bin/bash
     ## Assess replicate reproducibility ##

@@ -126,7 +126,7 @@ R
 
 ## 3.4. Assess mapped fragment size distribution  
 
-    vim cut34.sh
+    vim cut34_fragmentLen.sh
     
     #!/bin/bash
 
@@ -146,7 +146,7 @@ Nothing
 
 ## 4.2 File format conversion  
     
-    vim cut3_bam2bed.sh
+    vim cut4_bam2bed.sh
     
     #!/bin/bash
     ## File format conversion ##
@@ -168,7 +168,7 @@ Nothing
 
 ## 4.3 Assess replicate reproducibility  
     
-    vim cut4.sh
+    vim cut43_bin500.sh
     
     #!/bin/bash
     ## Assess replicate reproducibility ##
@@ -198,7 +198,7 @@ R
     -i ./bam/${i}_mm10_bowtie2.fragments.bed \
     -g /home/yangjiajun/downloads/genome/mm10_GRCm38/ucsc_fa/mm10.chrom.sizes > ./bedgraph/${i}_mm10_bowtie2.fragments.normalized.bedgraph
 
-    vim cut5.sh
+    vim cut5_bedgraph.sh
 
     #!/bin/bash
     ## Spike-in calibration ##
@@ -227,5 +227,11 @@ R
          ./bedgraph/CFA3-B1_mm10_bowtie2.fragments.normalized.bedgraph \
          norm stringent ./SEACR/NADCFA3-2_seacr_control.peaks &
 
+    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CT-H_mm10_bowtie2.fragments.normalized.bedgraph \
+         ./bedgraph/bg-B2_mm10_bowtie2.fragments.normalized.bedgraph \
+         norm stringent ./SEACR/CT-H_seacr_control.peaks &
 
+    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CT-S1_mm10_bowtie2.fragments.normalized.bedgraph \
+         ./bedgraph/bg-B2_mm10_bowtie2.fragments.normalized.bedgraph \
+         norm stringent ./SEACR/CT-S1_seacr_control.peaks &
 

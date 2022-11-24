@@ -4,7 +4,7 @@
 cat filenames | while read i; 
 do
 ## Filter and keep the mapped read pairs
-nohup samtools view -bS -F 0x04 ./bam/${i}_mm10_bowtie2.sam > ./bam/${i}_mm10_bowtie2.mapped.bam &&
+nohup samtools view -@ 4 -bS -F 0x04 ./bam/${i}_mm10_bowtie2.sam > ./bam/${i}_mm10_bowtie2.mapped.bam &&
 
 ## Convert into bed file format
 bedtools bamtobed -i ./bam/${i}_mm10_bowtie2.mapped.bam -bedpe > ./bed/${i}_mm10_bowtie2.bed &&

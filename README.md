@@ -252,6 +252,8 @@ R
 
 The Sparse Enrichment Analysis for CUT&RUN, SEACR, package is designed to call peaks and enriched regions from chromatin profiling data with very low backgrounds (i.e., regions with no read coverage) that are typical for CUT&Tag chromatin profiling experiments. SEACR requires bedGraph files from paired-end sequencing as input and defines peaks as contiguous blocks of basepair coverage that do not overlap with blocks of background signal delineated in the IgG control dataset. SEACR is effective for calling both narrow peaks from factor binding sites and broad domains characteristic of some histone modifications. The description of the method is published at Meers et al. 2019, and the user’s manual is available on github. Since we have normalized fragment counts with the E. coli read count, we set the normalization option of SEACR to “non”. Otherwise, the “norm” is recommended.  
 
+对CUT&RUN的稀疏富集分析SEACR包的设计用于从非常低的背景(即没有read覆盖的区域)的染色质中富集区域并call peaks，这是典型的CUT&Tag染色质分析实验。SEACR需要来自pairedend测序的bedGraph文件作为输入，并将峰定义为不与IgG对照数据集中描绘的背景信号块重叠的连续碱基对覆盖块。SEACR既能有效地从因子结合位点calling窄峰，也能calling出某些组蛋白修饰特征的宽域。由于我们已经使用大肠杆菌read count对片段计数进行了规范化，所以我们将SEACR的规范化选项设置为“non”。否则，建议使用“norm”。  
+
 Here, we used "norm".  
 
     bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CFA3-1_mm10_bowtie2.fragments.normalized.bedgraph \

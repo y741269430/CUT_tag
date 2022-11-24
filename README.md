@@ -143,11 +143,8 @@ CUT&Tag将adaptors整合到抗体栓系pA-Tn5附近的DNA中，并且整合的�
 R  
 
 （1）In these example datasets, the IgG control samples have relatively high duplication rates, since reads in this sample derive from non-specific tagmentation in the CUT&Tag reactions. Therefore, it is appropriate to remove the duplicates from the IgG datasets before downstream analysis.  
-
 （2）The estimated library size are the estimated number of unique molecules in the library based on PE duplication calculated by Picard.  
-
 （3）The estimated library sizes is proportional to the abundance of the targeted epitope and to the quality of the antibody used, while the estimated library sizes of IgG samples are expected to be very low.  
-
 （4）Unique fragment number is calculated by the MappedFragNum_hg38 * (1-DuplicationRate/100).  
 
 （1）在这些样本数据集中，IgG对照样本有相对较高的重复率，因为该样本中的reads来自于CUT&Tag反应中的非特异性标记。因此，在进行下游分析之前，应该将重复的IgG数据集删除。  

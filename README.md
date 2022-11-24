@@ -155,7 +155,7 @@ The smaller fragments (50-100 bp) can be due to that tethered Tn5 can tagment on
     do
     ## Extract the 9th column from the alignment sam file which is the fragment length
     nohup samtools view \
-    -F 0x04 ./bam/${i}_mm10_bowtie2.sam | awk \
+    -@ 4 -F 0x04 ./bam/${i}_mm10_bowtie2.sam | awk \
     -F'\t' 'function abs(x){return ((x < 0.0) ? -x : x)} {print abs($9)}' | sort | uniq -c | awk \
     -v OFS="\t" '{print $2, $1/2}' > ./fragmentLen/${i}_fragmentLen.txt &
     done
@@ -175,7 +175,7 @@ Nothing
     cat filenames | while read i; 
     do
     ## Filter and keep the mapped read pairs
-    nohup samtools view -bS -F 0x04 ./bam/${i}_mm10_bowtie2.sam > ./bam/${i}_mm10_bowtie2.mapped.bam &&
+    nohup samtools view -@ 4 -bS -F 0x04 ./bam/${i}_mm10_bowtie2.sam > ./bam/${i}_mm10_bowtie2.mapped.bam &&
 
     ## Convert into bed file format
     bedtools bamtobed -i ./bam/${i}_mm10_bowtie2.mapped.bam -bedpe > ./bed/${i}_mm10_bowtie2.bed &&
@@ -204,11 +204,11 @@ R
 
 ## 5.1 Scaling factor   
 
-    samtools view -F 0x04 ./bam/CFA3-1_ecoil_bowtie2.sam | wc -l > ./bowtie2_summary/CFA3-1_ecoil_bowtie2.seqDepthDouble &
-    samtools view -F 0x04 ./bam/CFA3-2_ecoil_bowtie2.sam | wc -l > ./bowtie2_summary/CFA3-2_ecoil_bowtie2.seqDepthDouble &
-    samtools view -F 0x04 ./bam/CFA3-B1_ecoil_bowtie2.sam | wc -l > ./bowtie2_summary/CFA3-B1_ecoil_bowtie2.seqDepthDouble &
-    samtools view -F 0x04 ./bam/NADCFA3-1_ecoil_bowtie2.sam | wc -l > ./bowtie2_summary/NADCFA3-1_ecoil_bowtie2.seqDepthDouble &
-    samtools view -F 0x04 ./bam/NADCFA3-2_ecoil_bowtie2.sam | wc -l > ./bowtie2_summary/NADCFA3-2_ecoil_bowtie2.seqDepthDouble &
+    samtools view -@ 4 -F 0x04 ./bam/CFA3-1_ecoil_bowtie2.sam | wc -l > ./bowtie2_summary/CFA3-1_ecoil_bowtie2.seqDepthDouble &
+    samtools view -@ 4 -F 0x04 ./bam/CFA3-2_ecoil_bowtie2.sam | wc -l > ./bowtie2_summary/CFA3-2_ecoil_bowtie2.seqDepthDouble &
+    samtools view -@ 4 -F 0x04 ./bam/CFA3-B1_ecoil_bowtie2.sam | wc -l > ./bowtie2_summary/CFA3-B1_ecoil_bowtie2.seqDepthDouble &
+    samtools view -@ 4 -F 0x04 ./bam/NADCFA3-1_ecoil_bowtie2.sam | wc -l > ./bowtie2_summary/NADCFA3-1_ecoil_bowtie2.seqDepthDouble &
+    samtools view -@ 4 -F 0x04 ./bam/NADCFA3-2_ecoil_bowtie2.sam | wc -l > ./bowtie2_summary/NADCFA3-2_ecoil_bowtie2.seqDepthDouble &
 
     seqDepth=$((seqDepthDouble/2))
     scale_factor=`echo "10000 / $seqDepth" | bc -l`

@@ -206,6 +206,8 @@ No remove duplication
     
 Remove duplication  
 
+    vim cut42_bam2bed_rmd.sh
+    
     #!/bin/bash
     ## File format conversion ##
 
@@ -271,6 +273,8 @@ No remove duplication
     
 Remove duplication  
 
+    vim cut5_bedgraph_rmd.sh
+    
     #!/bin/bash
     ## Spike-in calibration ##
 

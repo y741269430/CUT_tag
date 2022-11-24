@@ -40,7 +40,8 @@ Execute the following command once to generate a permanently used index!
 ## 1. Activate the source and create the folder  
     
     conda activate cuttag  
-    mkdir bam bowtie2_summary picard_summary bedgraph SEACR fragmentLen
+    
+    mkdir bam bed bowtie2_summary picard_summary bedgraph SEACR fragmentLen plot  
     
 ## 2. Write the filenames  
     
@@ -157,13 +158,13 @@ Nothing
     nohup samtools view -bS -F 0x04 ./bam/${i}_mm10_bowtie2.sam > ./bam/${i}_mm10_bowtie2.mapped.bam &&
 
     ## Convert into bed file format
-    bedtools bamtobed -i ./bam/${i}_mm10_bowtie2.mapped.bam -bedpe > ./bam/${i}_mm10_bowtie2.bed &&
+    bedtools bamtobed -i ./bam/${i}_mm10_bowtie2.mapped.bam -bedpe > ./bed/${i}_mm10_bowtie2.bed &&
 
     ## Keep the read pairs that are on the same chromosome and fragment length less than 1000bp.
-    awk '$1==$4 && $6-$2 < 1000 {print $0}' ./bam/${i}_mm10_bowtie2.bed > ./bam/${i}_mm10_bowtie2.clean.bed &&
+    awk '$1==$4 && $6-$2 < 1000 {print $0}' ./bed/${i}_mm10_bowtie2.bed > ./bed/${i}_mm10_bowtie2.clean.bed &&
 
     ## Only extract the fragment related columns
-    cut -f 1,2,6 ./bam/${i}_mm10_bowtie2.clean.bed | sort -k1,1 -k2,2n -k3,3n > ./bam/${i}_mm10_bowtie2.fragments.bed &
+    cut -f 1,2,6 ./bed/${i}_mm10_bowtie2.clean.bed | sort -k1,1 -k2,2n -k3,3n > ./bed/${i}_mm10_bowtie2.fragments.bed &
     done
 
 ## 4.3 Assess replicate reproducibility  
@@ -176,7 +177,7 @@ Nothing
     cat filenames | while read i; 
     do
     ## We use the mid point of each fragment to infer which 500bp bins does this fragment belong to.
-    awk -v w=500 '{print $1, int(($2 + $3)/(2*w))*w + w/2}' ./bam/${i}_mm10_bowtie2.fragments.bed | sort -k1,1V -k2,2n | uniq -c | awk -v OFS="\t" '{print $2, $3, $1}' |  sort -k1,1V -k2,2n > ./bam/${i}_mm10_bowtie2.fragmentsCount.bin500.bed &
+    awk -v w=500 '{print $1, int(($2 + $3)/(2*w))*w + w/2}' ./bed/${i}_mm10_bowtie2.fragments.bed | sort -k1,1V -k2,2n | uniq -c | awk -v OFS="\t" '{print $2, $3, $1}' |  sort -k1,1V -k2,2n > ./bed/${i}_mm10_bowtie2.fragmentsCount.bin500.bed &
     done
 
 R  
@@ -195,7 +196,7 @@ R
 
     bedtools genomecov \
     -bg -scale $scale_factor \
-    -i ./bam/${i}_mm10_bowtie2.fragments.bed \
+    -i ./bed/${i}_mm10_bowtie2.fragments.bed \
     -g /home/yangjiajun/downloads/genome/mm10_GRCm38/ucsc_fa/mm10.chrom.sizes > ./bedgraph/${i}_mm10_bowtie2.fragments.normalized.bedgraph
 
     vim cut5_bedgraph.sh
@@ -205,7 +206,7 @@ R
 
     cat filenames | while read i; 
     do
-    bedtools genomecov -bg -i ./bam/${i}_mm10_bowtie2.fragments.bed \
+    bedtools genomecov -bg -i ./bed/${i}_mm10_bowtie2.fragments.bed \
     -g /home/yangjiajun/downloads/genome/mm10_GRCm38/ucsc_fa/mm10.chrom.sizes > ./bedgraph/${i}_mm10_bowtie2.fragments.normalized.bedgraph &
     done
 

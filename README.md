@@ -316,7 +316,8 @@ Here, we used "norm".
     ./bedgraph/bg-B1_mm10_bowtie2.fragments.normalized.bedgraph \
     norm stringent ./SEACR/CT-S1_seacr_control.peaks &
 
-########
+########  
+
     bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CFA3-1_mm10_bowtie2.fragments.normalized.bedgraph \
     ./bedgraph/bg-B2_mm10_bowtie2.fragments.normalized.bedgraph \
     norm stringent ./SEACR_b2/CFA3-1_seacr_control.peaks &

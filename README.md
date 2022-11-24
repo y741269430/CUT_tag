@@ -69,6 +69,8 @@ Execute the following command once to generate a permanently used index!
 
 E. coli DNA is carried along with bacterially-produced pA-Tn5 protein and gets tagmented non-specifically during the reaction. The fraction of total reads that map to the E.coli genome depends on the yield of epitope-targeted CUT&Tag, and so depends on the number of cells used and the abundance of that epitope in chromatin. Since a constant amount of pATn5 is added to CUT&Tag reactions and brings along a fixed amount of E. coli DNA, E. coli reads can be used to normalize epitope abundance in a set of experiments.  
 
+大肠杆菌的DNA与细菌产生的pA-Tn5蛋白一起携带，并在反应过程中受到非特异性标记。定位到大肠杆菌基因组的总reads的比例取决于表位靶向的CUT&Tag的产量，因此也取决于所使用的细胞数量和染色质中表位的丰度。由于在CUT&Tag反应中加入一定量的pA-Tn5并带来一定量的大肠杆菌DNA，因此大肠杆菌reads可用于一系列实验中表位丰度的标准化。  
+
     vim cut1_ecoil_bw2.sh
     
     #!/bin/bash
@@ -89,6 +91,8 @@ E. coli DNA is carried along with bacterially-produced pA-Tn5 protein and gets t
 
 Summarize the raw reads and uniquely mapping reads to report the efficiency of alignment. Alignment frequencies are expected to be >80% for high-quality data. CUT&Tag data typically has very low backgrounds, so as few as 1 million mapped fragments can give robust profiles for a histone modification in the human genome. Profiling of less-abundant transcription factors and chromatin proteins may require 10 times as many mapped fragments for downstream analysis.  
 
+总结原始reads和唯一比对reads，以报告比对的效率。对于高质量数据，比对频率预计为>80%。一般来说，CUT&Tag数据的背景非常低，因此，只需100万个比对上的片段就可以为人类基因组中的组蛋白修饰提供可靠的profiles。低丰度的转录因子和染色质蛋白的谱分析可能需要10倍于下游分析的图谱片段。  
+
 ## 3.2.1 Sequencing depth  
 R  
 
@@ -99,13 +103,18 @@ R
 R  
 
 ## 3.2.4 Visualizing the sequencing depth and alignment results.  
+
 R  
 
 In a typical CUT&Tag experiment targeting the abundant H3K27me3 histone modification in 65,000 K562 cells, the percentage of E. coli reads range from ~0.01% to 10%. With fewer cells or less abundant epitopes, E. coli reads can comprise as much as 70% or the total mapped reads. For IgG controls, the percentage of E. coli reads is typically much higher than that for an abundant histone modification.   
 
+在一项针对65,000个K562细胞中富集H3K27me3组蛋白修饰的CUT&Tag实验中，E.coli的reads比例在~0.01%至10%之间。如果细胞数量少或表位数量少，E.coli的reads可占总reads的70%。对于IgG对照，E.coli的reads比例通常比组蛋白修饰的要高得多。  
+
 ## 3.3 Remove duplicates   
 
 CUT&Tag integrates adapters into DNA in the vicinity of the antibody-tethered pA-Tn5, and the exact sites of integration are affected by the accessibility of surrounding DNA. For this reason fragments that share exact starting and ending positions are expected to be common, and such ‘duplicates’ may not be due to duplication during PCR. In practice, we have found that the apparent duplication rate is low for high quality CUT&Tag datasets, and even the apparent ‘duplicate’ fragments are likely to be true fragments. Thus, we do not recommend removing the duplicates. In experiments with very small amounts of material or where PCR duplication is suspected, duplicates can be removed. The following commands show how to check the duplication rate using Picard.    
+
+CUT&Tag将adaptors整合到抗体栓系pA-Tn5附近的DNA中，并且整合的准确位置受周围DNA可及性的影响。由于这个原因，共享精确起始和结束位置的片段是常见的，而这种“duplicates”可能不是由于PCR过程中的重复。在实践中，我们发现对于高质量的CUT&Tag数据集，重复率是很低的，甚至“重复”片段也很可能是真实的片段。因此，我们不建议删除duplicates。在用非常少量的材料或怀疑是PCR重复的时候，duplicates可以被去除。下面的命令展示了如何使用Picard检查重复率。  
 
     vim cut2_picard.sh
     
@@ -133,19 +142,28 @@ CUT&Tag integrates adapters into DNA in the vicinity of the antibody-tethered pA
 
 R  
 
-In these example datasets, the IgG control samples have relatively high duplication rates, since reads in this sample derive from non-specific tagmentation in the CUT&Tag reactions. Therefore, it is appropriate to remove the duplicates from the IgG datasets before downstream analysis.  
+（1）In these example datasets, the IgG control samples have relatively high duplication rates, since reads in this sample derive from non-specific tagmentation in the CUT&Tag reactions. Therefore, it is appropriate to remove the duplicates from the IgG datasets before downstream analysis.  
 
-The estimated library size are the estimated number of unique molecules in the library based on PE duplication calculated by Picard.  
+（2）The estimated library size are the estimated number of unique molecules in the library based on PE duplication calculated by Picard.  
 
-The estimated library sizes is proportional to the abundance of the targeted epitope and to the quality of the antibody used, while the estimated library sizes of IgG samples are expected to be very low.  
+（3）The estimated library sizes is proportional to the abundance of the targeted epitope and to the quality of the antibody used, while the estimated library sizes of IgG samples are expected to be very low.  
 
-Unique fragment number is calculated by the MappedFragNum_hg38 * (1-DuplicationRate/100).  
+（4）Unique fragment number is calculated by the MappedFragNum_hg38 * (1-DuplicationRate/100).  
+
+（1）在这些样本数据集中，IgG对照样本有相对较高的重复率，因为该样本中的reads来自于CUT&Tag反应中的非特异性标记。因此，在进行下游分析之前，应该将重复的IgG数据集删除。  
+（2）文库的大小是Picard根据PE重复计算出的文库中唯一分子的数量。  
+（3）估计的文库大小与靶标表位的丰度和所用抗体的质量成正比，而IgG样本的文库估计大小非常低。  
+（4）唯一的片段数由MappedFragNum_hg38 * (1-DuplicationRate/100)计算。  
 
 ## 3.4. Assess mapped fragment size distribution  
 
 CUT&Tag inserts adapters on either side of chromatin particles in the vicinity of the tethered enzyme, although tagmentation within chromatin particles can also occur. So, CUT&Tag reactions targeting a histone modification predominantly results in fragments that are nucleosomal lengths (~180 bp), or multiples of that length. CUT&Tag targeting transcription factors predominantly produce nucleosome-sized fragments and variable amounts of shorter fragments, from neighboring nucleosomes and the factor-bound site, respectively. Tagmentation of DNA on the surface of nucleosomes also occurs, and plotting fragment lengths with single-basepair resolution reveal a 10-bp sawtooth periodicity, which is typical of successful CUT&Tag experiments.   
 
+CUT&Tag在被酶栓附近的染色质颗粒的两侧插入adaptors，虽然染色质颗粒内的标记也可能发生。因此，针对组蛋白修饰的CUT&Tag反应主要导致核小体长度(~180 bp)或数倍于该长度的片段。CUT&Tag靶向转录因子主要产生核小体大小的片段和不同数量的短片段，分别来自邻近的核小体和因子结合位点。DNA的标记在核小体表面的也发生，用单碱基对分辨率绘制片段长度显示了10 bp的锯齿状周期性，这是成功的CUT&Tag实验的典型特征。  
+
 The smaller fragments (50-100 bp) can be due to that tethered Tn5 can tagment on the surface of a nucleosome as well as in linker regions, so the small fragments might not be background.  
+
+较小的片段(50-100 bp)可能是由于Tn5被栓系在核小体表面以及linker区域，因此小片段可能不是背景。  
 
     vim cut34_fragmentLen.sh
     

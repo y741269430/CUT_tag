@@ -182,6 +182,8 @@ Nothing
 
 ## 4.2 File format conversion  
     
+No remove duplication  
+
     vim cut42_bam2bed.sh
     
     #!/bin/bash
@@ -200,6 +202,26 @@ Nothing
 
     ## Only extract the fragment related columns
     cut -f 1,2,6 ./bed/${i}_mm10_bowtie2.clean.bed | sort -k1,1 -k2,2n -k3,3n > ./bed/${i}_mm10_bowtie2.fragments.bed &
+    done
+    
+Remove duplication  
+
+    #!/bin/bash
+    ## File format conversion ##
+
+    cat filenames | while read i; 
+    do
+    ## Filter and keep the mapped read pairs
+    nohup samtools view -@ 4 -bS -F 0x04 ./bam/${i}_bowtie2.sorted.rmDup.sam > ./bam/${i}_mm10_bowtie2.mapped.rmDup.bam &&
+
+    ## Convert into bed file format
+    bedtools bamtobed -i ./bam/${i}_mm10_bowtie2.mapped.rmDup.bam -bedpe > ./bed/${i}_mm10_bowtie2.rmDup.bed &&
+
+    ## Keep the read pairs that are on the same chromosome and fragment length less than 1000bp.
+    awk '$1==$4 && $6-$2 < 1000 {print $0}' ./bed/${i}_mm10_bowtie2.rmDup.bed > ./bed/${i}_mm10_bowtie2.clean.rmDup.bed &&
+
+    ## Only extract the fragment related columns
+    cut -f 1,2,6 ./bed/${i}_mm10_bowtie2.clean.rmDup.bed | sort -k1,1 -k2,2n -k3,3n > ./bed/${i}_mm10_bowtie2.fragments.rmDup.bed &
     done
 
 ## 4.3 Assess replicate reproducibility  
@@ -233,6 +255,8 @@ R
     -bg -scale $scale_factor \
     -i ./bed/${i}_mm10_bowtie2.fragments.bed \
     -g /home/yangjiajun/downloads/genome/mm10_GRCm38/ucsc_fa/mm10.chrom.sizes > ./bedgraph/${i}_mm10_bowtie2.fragments.normalized.bedgraph
+    
+No remove duplication  
 
     vim cut5_bedgraph.sh
 
@@ -243,6 +267,17 @@ R
     do
     bedtools genomecov -bg -i ./bed/${i}_mm10_bowtie2.fragments.bed \
     -g /home/yangjiajun/downloads/genome/mm10_GRCm38/ucsc_fa/mm10.chrom.sizes > ./bedgraph/${i}_mm10_bowtie2.fragments.normalized.bedgraph &
+    done
+    
+Remove duplication  
+
+    #!/bin/bash
+    ## Spike-in calibration ##
+
+    cat filenames | while read i; 
+    do
+    bedtools genomecov -bg -i ./bed/${i}_mm10_bowtie2.fragments.rmDup.bed \
+    -g /home/yangjiajun/downloads/genome/mm10_GRCm38/ucsc_fa/mm10.chrom.sizes > ./bedgraph/${i}_mm10_bowtie2.fragments.normalized.rmDup.bedgraph &
     done
 
 ## 6.1. SEACR  

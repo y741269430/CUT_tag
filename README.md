@@ -147,7 +147,7 @@ Nothing
 
 ## 4.2 File format conversion  
     
-    vim cut4_bam2bed.sh
+    vim cut42_bam2bed.sh
     
     #!/bin/bash
     ## File format conversion ##

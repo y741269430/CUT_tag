@@ -293,26 +293,50 @@ The Sparse Enrichment Analysis for CUT&RUN, SEACR, package is designed to call p
 Here, we used "norm".  
 
     bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CFA3-1_mm10_bowtie2.fragments.normalized.bedgraph \
-         ./bedgraph/CFA3-B1_mm10_bowtie2.fragments.normalized.bedgraph \
-         norm stringent ./SEACR/CFA3-1_seacr_control.peaks &
+    ./bedgraph/bg-B1_mm10_bowtie2.fragments.normalized.bedgraph \
+    norm stringent ./SEACR/CFA3-1_seacr_control.peaks &
 
     bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CFA3-2_mm10_bowtie2.fragments.normalized.bedgraph \
-         ./bedgraph/CFA3-B1_mm10_bowtie2.fragments.normalized.bedgraph \
-         norm stringent ./SEACR/CFA3-2_seacr_control.peaks &
+    ./bedgraph/bg-B1_mm10_bowtie2.fragments.normalized.bedgraph \
+    norm stringent ./SEACR/CFA3-2_seacr_control.peaks &
 
     bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/NADCFA3-1_mm10_bowtie2.fragments.normalized.bedgraph \
-         ./bedgraph/CFA3-B1_mm10_bowtie2.fragments.normalized.bedgraph \
-         norm stringent ./SEACR/NADCFA3-1_seacr_control.peaks &
+    ./bedgraph/bg-B1_mm10_bowtie2.fragments.normalized.bedgraph \
+    norm stringent ./SEACR/NADCFA3-1_seacr_control.peaks &
 
     bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/NADCFA3-2_mm10_bowtie2.fragments.normalized.bedgraph \
-         ./bedgraph/CFA3-B1_mm10_bowtie2.fragments.normalized.bedgraph \
-         norm stringent ./SEACR/NADCFA3-2_seacr_control.peaks &
+    ./bedgraph/bg-B1_mm10_bowtie2.fragments.normalized.bedgraph \
+    norm stringent ./SEACR/NADCFA3-2_seacr_control.peaks &
 
     bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CT-H_mm10_bowtie2.fragments.normalized.bedgraph \
-         ./bedgraph/bg-B2_mm10_bowtie2.fragments.normalized.bedgraph \
-         norm stringent ./SEACR/CT-H_seacr_control.peaks &
+    ./bedgraph/bg-B1_mm10_bowtie2.fragments.normalized.bedgraph \
+    norm stringent ./SEACR/CT-H_seacr_control.peaks &
 
     bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CT-S1_mm10_bowtie2.fragments.normalized.bedgraph \
-         ./bedgraph/bg-B2_mm10_bowtie2.fragments.normalized.bedgraph \
-         norm stringent ./SEACR/CT-S1_seacr_control.peaks &
+    ./bedgraph/bg-B1_mm10_bowtie2.fragments.normalized.bedgraph \
+    norm stringent ./SEACR/CT-S1_seacr_control.peaks &
 
+########
+    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CFA3-1_mm10_bowtie2.fragments.normalized.bedgraph \
+    ./bedgraph/bg-B2_mm10_bowtie2.fragments.normalized.bedgraph \
+    norm stringent ./SEACR_b2/CFA3-1_seacr_control.peaks &
+
+    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CFA3-2_mm10_bowtie2.fragments.normalized.bedgraph \
+    ./bedgraph/bg-B2_mm10_bowtie2.fragments.normalized.bedgraph \
+    norm stringent ./SEACR_b2/CFA3-2_seacr_control.peaks &
+
+    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/NADCFA3-1_mm10_bowtie2.fragments.normalized.bedgraph \
+    ./bedgraph/bg-B2_mm10_bowtie2.fragments.normalized.bedgraph \
+    norm stringent ./SEACR_b2/NADCFA3-1_seacr_control.peaks &
+
+    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/NADCFA3-2_mm10_bowtie2.fragments.normalized.bedgraph \
+    ./bedgraph/bg-B2_mm10_bowtie2.fragments.normalized.bedgraph \
+    norm stringent ./SEACR_b2/NADCFA3-2_seacr_control.peaks &
+
+    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CT-H_mm10_bowtie2.fragments.normalized.bedgraph \
+    ./bedgraph/bg-B2_mm10_bowtie2.fragments.normalized.bedgraph \
+    norm stringent ./SEACR_b2/CT-H_seacr_control.peaks &
+
+    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CT-S1_mm10_bowtie2.fragments.normalized.bedgraph \
+    ./bedgraph/bg-B2_mm10_bowtie2.fragments.normalized.bedgraph \
+    norm stringent ./SEACR_b2/CT-S1_seacr_control.peaks &

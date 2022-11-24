@@ -162,7 +162,7 @@ The smaller fragments (50-100 bp) can be due to that tethered Tn5 can tagment on
 
 较小的片段(50-100 bp)可能是由于Tn5被栓系在核小体表面以及linker区域，因此小片段可能不是背景。  
 
-    vim cut34_fragmentLen.sh
+    vim cut34_fragmentLen.sh (optional)
     
     #!/bin/bash
 
@@ -204,7 +204,7 @@ Nothing
 
 ## 4.3 Assess replicate reproducibility  
     
-    vim cut43_bin500.sh
+    vim cut43_bin500.sh (optional)
     
     #!/bin/bash
     ## Assess replicate reproducibility ##

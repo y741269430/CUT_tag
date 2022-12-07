@@ -192,10 +192,10 @@ No remove duplication
     cat filenames | while read i; 
     do
     ## Filter and keep the mapped read pairs
-    nohup samtools view -@ 4 -bS -F 0x04 ./bam/${i}_mm10_bowtie2.sam > ./bam/${i}_mm10_bowtie2.mapped.bam &&
+    nohup samtools view -@ 8 -bS -F 0x04 ./bam/${i}_mm10_bowtie2.sam > ./mapbam/${i}_mm10_bowtie2.mapped.bam &&
 
     ## Convert into bed file format
-    bedtools bamtobed -i ./bam/${i}_mm10_bowtie2.mapped.bam -bedpe > ./bed/${i}_mm10_bowtie2.bed &&
+    bedtools bamtobed -i ./mapbam/${i}_mm10_bowtie2.mapped.bam -bedpe > ./bed/${i}_mm10_bowtie2.bed &&
 
     ## Keep the read pairs that are on the same chromosome and fragment length less than 1000bp.
     awk '$1==$4 && $6-$2 < 1000 {print $0}' ./bed/${i}_mm10_bowtie2.bed > ./bed/${i}_mm10_bowtie2.clean.bed &&
@@ -214,10 +214,10 @@ Remove duplication
     cat filenames | while read i; 
     do
     ## Filter and keep the mapped read pairs
-    nohup samtools view -@ 4 -bS -F 0x04 ./bam/${i}_bowtie2.sorted.rmDup.sam > ./bam/${i}_mm10_bowtie2.mapped.rmDup.bam &&
+    nohup samtools view -@ 8 -bS -F 0x04 ./bam/${i}_bowtie2.sorted.rmDup.sam > ./mapbam/${i}_mm10_bowtie2.mapped.rmDup.bam &&
 
     ## Convert into bed file format
-    bedtools bamtobed -i ./bam/${i}_mm10_bowtie2.mapped.rmDup.bam -bedpe > ./bed/${i}_mm10_bowtie2.rmDup.bed &&
+    bedtools bamtobed -i ./mapbam/${i}_mm10_bowtie2.mapped.rmDup.bam -bedpe > ./bed/${i}_mm10_bowtie2.rmDup.bed &&
 
     ## Keep the read pairs that are on the same chromosome and fragment length less than 1000bp.
     awk '$1==$4 && $6-$2 < 1000 {print $0}' ./bed/${i}_mm10_bowtie2.rmDup.bed > ./bed/${i}_mm10_bowtie2.clean.rmDup.bed &&

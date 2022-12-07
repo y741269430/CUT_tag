@@ -41,7 +41,7 @@ Execute the following command once to generate a permanently used index!
     
     conda activate cuttag  
     
-    mkdir raw clean bam bed bowtie2_summary picard_summary bedgraph SEACR fragmentLen plot  
+    mkdir raw clean bam mapbam bed bowtie2_summary picard_summary bedgraph SEACR fragmentLen plot  
     
 ## 2. Write the filenames  
     

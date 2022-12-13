@@ -341,3 +341,18 @@ Here, we used "norm".
     bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CT-S1_mm10_bowtie2.fragments.normalized.bedgraph \
     ./bedgraph/bg-B2_mm10_bowtie2.fragments.normalized.bedgraph \
     norm stringent ./SEACR_b2/CT-S1_seacr_control.peaks &
+
+## 7. sort index
+
+Sort bam files and index for diffbind in R.  
+
+    vim sort_idx.sh
+
+    #!/bin/bash
+    ## sort bam and index for diffbind ##
+
+    cat filenames | while read i; 
+    do
+    nohup samtools sort -@ 8 ./mapbam/${i}_mm10_bowtie2.mapped.bam -o ./mapbam/${i}_mm10_bowtie2.sorted.bam &&
+    samtools index -@ 8 ./mapbam/${i}_mm10_bowtie2.sorted.bam &
+    done

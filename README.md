@@ -46,6 +46,12 @@ Execute the following command once to generate a permanently used index!
 ## 2. Write the filenames  
     
     ls raw/*1.fq.gz |cut -d "_" -f 1 |cut -d "/" -f 2 |cut -d "-" -f 4-5 > filenames
+    
+## (Quick Start)  
+
+    cut1_mm10_bw2.sh  
+    cut42_bam2bed.sh  
+    cut5_bedgraph.sh  
 
 ## 3.1.1 Alignment to mm10  
     

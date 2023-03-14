@@ -52,6 +52,7 @@ Execute the following command once to generate a permanently used index!
     cut1_mm10_bw2.sh  
     cut42_bam2bed.sh  
     cut5_bedgraph.sh  
+    cut6_seacr005.sh  
 
 ## 3.1.1 Alignment to mm10  
     

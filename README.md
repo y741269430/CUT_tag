@@ -52,7 +52,8 @@ Execute the following command once to generate a permanently used index!
     cut1_mm10_bw2.sh  
     cut42_bam2bed.sh  
     cut5_bedgraph.sh  
-    cut6_seacr005.sh  
+    cut6_seacr005.sh
+    cut7_bw.sh  
 
 ## 3.1.1 Alignment to mm10  
     
@@ -383,3 +384,23 @@ Sort bam files and index for diffbind in R.
     nohup samtools sort -@ 8 ./mapbam/${i}_mm10_bowtie2.mapped.bam -o ./mapbam/${i}_mm10_bowtie2.sorted.bam &&
     samtools index -@ 8 ./mapbam/${i}_mm10_bowtie2.sorted.bam &
     done
+
+## 8. bw file in IGV  
+
+Transfer to BW in IGV.  
+
+    vim cut7_bw.sh  
+    
+    #!/bin/bash
+    ## make bigwig (deeptools) ##
+
+    cat filenames | while read i; 
+    do
+    nohup bamCoverage --bam mapbam/${i}_mm10_bowtie2.sorted.bam -o bw_file/${i}.bw \
+        --binSize 10 \
+        --normalizeUsing RPKM \
+        --numberOfProcessors 10 \
+        --effectiveGenomeSize 2652783500 &
+    done
+    
+    

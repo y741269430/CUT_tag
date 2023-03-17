@@ -374,29 +374,29 @@ Here, we used "0.01".
 
 Sort bam files and index for diffbind in R.  
 
-    vim sort_idx.sh
+    vim cut7_sort_idx.sh
 
     #!/bin/bash
-    ## sort bam and index for diffbind ##
+    ## sort bam and index for diffbind or igv ##
 
     cat filenames | while read i; 
     do
-    nohup samtools sort -@ 8 ./mapbam/${i}_mm10_bowtie2.mapped.bam -o ./mapbam/${i}_mm10_bowtie2.sorted.bam &&
-    samtools index -@ 8 ./mapbam/${i}_mm10_bowtie2.sorted.bam &
+    nohup samtools sort -@ 8 ./mapbam/${i}_mm10_bowtie2.mapped.bam -o ./sortbam/${i}_mm10_bowtie2.sorted.bam &&
+    samtools index -@ 8 ./sortbam/${i}_mm10_bowtie2.sorted.bam &
     done
 
 ## 8. bw file in IGV  
 
 Transfer to BW in IGV.  
 
-    vim cut7_bw.sh  
+    vim cut8_bw.sh  
     
     #!/bin/bash
     ## make bigwig (deeptools) ##
 
     cat filenames | while read i; 
     do
-    nohup bamCoverage --bam mapbam/${i}_mm10_bowtie2.sorted.bam -o bw_file/${i}.bw \
+    nohup bamCoverage --bam ./sortbam/${i}_mm10_bowtie2.sorted.bam -o bw_file/${i}.bw \
         --binSize 10 \
         --normalizeUsing RPKM \
         --numberOfProcessors 10 \

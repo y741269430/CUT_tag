@@ -45,7 +45,7 @@ Execute the following command once to generate a permanently used index!
     
 ## 2. Write the filenames  
     
-    ls raw/*1.fq.gz |cut -d "_" -f 1 |cut -d "/" -f 2 |cut -d "-" -f 4-5 > filenames
+    ls raw/*1.fq.gz |cut -d "_" -f 1 |cut -d "/" -f 2 |cut -d "-" -f 1-5 > filenames
     
 ## (Quick Start)  
 
@@ -69,8 +69,8 @@ Execute the following command once to generate a permanently used index!
     do
     nohup bowtie2 --end-to-end --very-sensitive --no-mixed --no-discordant --phred33 \
     -I 10 -X 700 -p 8 -x ${mm10} \
-    -1 ./raw/BL6-TG-CUT-${i}_1.fq.gz \
-    -2 ./raw/BL6-TG-CUT-${i}_2.fq.gz \
+    -1 ./raw/${i}_1.fq.gz \
+    -2 ./raw/${i}_2.fq.gz \
     -S ./bam/${i}_mm10_bowtie2.sam &> ./bowtie2_summary/${i}_mm10_bowtie2.txt &
     done
 
@@ -91,8 +91,8 @@ E. coli DNA is carried along with bacterially-produced pA-Tn5 protein and gets t
     do
     nohup bowtie2 --end-to-end --very-sensitive --no-overlap --no-dovetail --no-mixed --no-discordant --phred33 \
     -I 10 -X 700 -p 8 -x ${spikeInRef} \
-    -1 ./raw/BL6-TG-CUT-${i}_1.fq.gz \
-    -2 ./raw/BL6-TG-CUT-${i}_2.fq.gz \
+    -1 ./raw/${i}_1.fq.gz \
+    -2 ./raw/${i}_2.fq.gz \
     -S ./bam/${i}_ecoil_bowtie2.sam &> ./bowtie2_summary/${i}_ecoil_bowtie2.txt &
     done
 

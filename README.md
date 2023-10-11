@@ -56,22 +56,23 @@ Execute the following command once to generate a permanently used index!
     cut7_sort_idx.sh
     cut8_bw.sh  
 
-## 3.1.1 Alignment to mm10  
+## 3.1.1 Alignment to mm39  
+注(报错)：Could not locate a Bowtie index corresponding to basename (下方的 ${mm39} 需要加上绝对路径(/home)而不是相对路径(~/))
     
     vim cut1_mm10_bw2.sh
     
     #!/bin/bash
     ## Alignment to mm10 ##
 
-    mm10="/home/yangjiajun/downloads/genome/mm10_GRCm38/bowtie2_idx/mm10"
+    mm39="/home/yangjiajun/downloads/genome/mm10_GRCm38/bowtie2_idx/mm39"
 
     cat filenames | while read i; 
     do
     nohup bowtie2 --end-to-end --very-sensitive --no-mixed --no-discordant --phred33 \
-    -I 10 -X 700 -p 8 -x ${mm10} \
+    -I 10 -X 700 -p 4 -x ${mm39} \
     -1 ./raw/${i}_1.fq.gz \
     -2 ./raw/${i}_2.fq.gz \
-    -S ./bam/${i}_mm10_bowtie2.sam &> ./bowtie2_summary/${i}_mm10_bowtie2.txt &
+    -S ./bam/${i}_mm39_bowtie2.sam &> ./bowtie2_summary/${i}_mm39_bowtie2.txt &
     done
 
 ## 3.1.2 Alignment to spike-in genome for spike-in calibration (ecoil)   

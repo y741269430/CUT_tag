@@ -18,13 +18,13 @@ The pipeline were based on https://yezhengstat.github.io/CUTTag_tutorial/index.h
 
 Execute the following command once to generate a permanently used index!  
 
-    cd /home/yangjiajun/downloads/genome/mm10_GRCm38/ucsc_fa/
+    cd /home/yangjiajun/downloads/genome/mm39_GRCm39/ucsc_fa/
 
     samtools faidx GRCm38.primary_assembly.genome.fa &
     cut -f1,2 GRCm38.primary_assembly.genome.fa.fai > mm10.chrom.sizes &
     
     nohup bowtie2-build GRCm38.primary_assembly.genome.fa \
-    /home/yangjiajun/downloads/genome/mm10_GRCm38/bowtie2_idx/mm10 &  
+    /home/yangjiajun/downloads/genome/mm39_GRCm39/bowtie2_idx/mm10 &  
 
 
     cd /home/yangjiajun/downloads/genome/ecoil_U00096.3/ucsc_fa/
@@ -41,7 +41,7 @@ Execute the following command once to generate a permanently used index!
     
     conda activate cuttag  
     
-    mkdir raw clean bam mapbam bed bowtie2_summary picard_summary bedgraph SEACR fragmentLen plot  
+    mkdir raw clean bam mapbam bed bowtie2_summary picard_summary bedgraph SEACR fragmentLen plot trim  
     
 ## 2. Write the filenames  
     
@@ -49,29 +49,43 @@ Execute the following command once to generate a permanently used index!
     
 ## (Quick Start)  
 
-    cut1_mm10_bw2.sh  
+    pre_trim.sh
+    cut1_bw2.sh  
     cut42_bam2bed.sh  
     cut5_bedgraph.sh  
     cut6_seacr005.sh
     cut7_sort_idx.sh
     cut8_bw.sh  
 
+## Remove adapter  
+    vim pre_trim.sh  
+    
+    #!/bin/bash
+    ## trim_galore ##
+    
+    cat filenames | while read i; 
+    do
+    # paired end
+    nohup trim_galore -q 25 --phred33 --length 20 -e 0.1 --stringency 1 --paired ./${i}*_1.fq.gz ./${i}*_2.fq.gz -o ./trim &
+    
+    done
+
 ## 3.1.1 Alignment to mm39  
 注(报错)：Could not locate a Bowtie index corresponding to basename (下方的 ${mm39} 需要加上绝对路径(/home)而不是相对路径(~/))
     
-    vim cut1_mm10_bw2.sh
+    vim cut1_bw2.sh
     
     #!/bin/bash
-    ## Alignment to mm10 ##
+    ## Alignment to mm39 ##
 
-    mm39="/home/yangjiajun/downloads/genome/mm10_GRCm38/bowtie2_idx/mm39"
+    mm39="/home/yangjiajun/downloads/genome/mm39_GRCm39/bowtie2_idx/mm39"
 
     cat filenames | while read i; 
     do
     nohup bowtie2 --end-to-end --very-sensitive --no-mixed --no-discordant --phred33 \
     -I 10 -X 700 -p 4 -x ${mm39} \
-    -1 ./raw/${i}_1.fq.gz \
-    -2 ./raw/${i}_2.fq.gz \
+    -1 ./trim/${i}_1_val_1.fq.gz \
+    -2 ./trim/${i}_2_val_2.fq.gz \
     -S ./bam/${i}_mm39_bowtie2.sam &> ./bowtie2_summary/${i}_mm39_bowtie2.txt &
     done
 
@@ -134,7 +148,7 @@ CUT&Tag将adaptors整合到抗体栓系pA-Tn5附近的DNA中，并且整合的�
     cat filenames | while read i; 
     do
     ## Sort by coordinate
-    nohup picard SortSam -I ./bam/${i}_mm10_bowtie2.sam \
+    nohup picard SortSam -I ./bam/${i}_mm39_bowtie2.sam \
     -O ./bam/${i}_bowtie2.sorted.sam \
     -SO coordinate &&
 
@@ -180,7 +194,7 @@ The smaller fragments (50-100 bp) can be due to that tethered Tn5 can tagment on
     do
     ## Extract the 9th column from the alignment sam file which is the fragment length
     nohup samtools view \
-    -@ 4 -F 0x04 ./bam/${i}_mm10_bowtie2.sam | awk \
+    -@ 4 -F 0x04 ./bam/${i}_mm39_bowtie2.sam | awk \
     -F'\t' 'function abs(x){return ((x < 0.0) ? -x : x)} {print abs($9)}' | sort | uniq -c | awk \
     -v OFS="\t" '{print $2, $1/2}' > ./fragmentLen/${i}_fragmentLen.txt &
     done
@@ -202,16 +216,16 @@ No remove duplication
     cat filenames | while read i; 
     do
     ## Filter and keep the mapped read pairs
-    nohup samtools view -@ 8 -bS -F 0x04 ./bam/${i}_mm10_bowtie2.sam > ./mapbam/${i}_mm10_bowtie2.mapped.bam &&
+    nohup samtools view -@ 8 -bS -F 0x04 ./bam/${i}_mm39_bowtie2.sam > ./mapbam/${i}_bowtie2.mapped.bam &&
 
     ## Convert into bed file format
-    bedtools bamtobed -i ./mapbam/${i}_mm10_bowtie2.mapped.bam -bedpe > ./bed/${i}_mm10_bowtie2.bed &&
+    bedtools bamtobed -i ./mapbam/${i}_bowtie2.mapped.bam -bedpe > ./bed/${i}_bowtie2.bed &&
 
     ## Keep the read pairs that are on the same chromosome and fragment length less than 1000bp.
-    awk '$1==$4 && $6-$2 < 1000 {print $0}' ./bed/${i}_mm10_bowtie2.bed > ./bed/${i}_mm10_bowtie2.clean.bed &&
+    awk '$1==$4 && $6-$2 < 1000 {print $0}' ./bed/${i}_bowtie2.bed > ./bed/${i}_bowtie2.clean.bed &&
 
     ## Only extract the fragment related columns
-    cut -f 1,2,6 ./bed/${i}_mm10_bowtie2.clean.bed | sort -k1,1 -k2,2n -k3,3n > ./bed/${i}_mm10_bowtie2.fragments.bed &
+    cut -f 1,2,6 ./bed/${i}_bowtie2.clean.bed | sort -k1,1 -k2,2n -k3,3n > ./bed/${i}_bowtie2.fragments.bed &
     done
     
 Remove duplication  
@@ -224,16 +238,16 @@ Remove duplication
     cat filenames | while read i; 
     do
     ## Filter and keep the mapped read pairs
-    nohup samtools view -@ 8 -bS -F 0x04 ./bam/${i}_bowtie2.sorted.rmDup.sam > ./mapbam/${i}_mm10_bowtie2.mapped.rmDup.bam &&
+    nohup samtools view -@ 8 -bS -F 0x04 ./bam/${i}_bowtie2.sorted.rmDup.sam > ./mapbam/${i}_bowtie2.mapped.rmDup.bam &&
 
     ## Convert into bed file format
-    bedtools bamtobed -i ./mapbam/${i}_mm10_bowtie2.mapped.rmDup.bam -bedpe > ./bed/${i}_mm10_bowtie2.rmDup.bed &&
+    bedtools bamtobed -i ./mapbam/${i}_bowtie2.mapped.rmDup.bam -bedpe > ./bed/${i}_bowtie2.rmDup.bed &&
 
     ## Keep the read pairs that are on the same chromosome and fragment length less than 1000bp.
-    awk '$1==$4 && $6-$2 < 1000 {print $0}' ./bed/${i}_mm10_bowtie2.rmDup.bed > ./bed/${i}_mm10_bowtie2.clean.rmDup.bed &&
+    awk '$1==$4 && $6-$2 < 1000 {print $0}' ./bed/${i}_bowtie2.rmDup.bed > ./bed/${i}_bowtie2.clean.rmDup.bed &&
 
     ## Only extract the fragment related columns
-    cut -f 1,2,6 ./bed/${i}_mm10_bowtie2.clean.rmDup.bed | sort -k1,1 -k2,2n -k3,3n > ./bed/${i}_mm10_bowtie2.fragments.rmDup.bed &
+    cut -f 1,2,6 ./bed/${i}_bowtie2.clean.rmDup.bed | sort -k1,1 -k2,2n -k3,3n > ./bed/${i}_bowtie2.fragments.rmDup.bed &
     done
 
 ## 4.3 Assess replicate reproducibility  
@@ -246,7 +260,7 @@ Remove duplication
     cat filenames | while read i; 
     do
     ## We use the mid point of each fragment to infer which 500bp bins does this fragment belong to.
-    awk -v w=500 '{print $1, int(($2 + $3)/(2*w))*w + w/2}' ./bed/${i}_mm10_bowtie2.fragments.bed | sort -k1,1V -k2,2n | uniq -c | awk -v OFS="\t" '{print $2, $3, $1}' |  sort -k1,1V -k2,2n > ./bed/${i}_mm10_bowtie2.fragmentsCount.bin500.bed &
+    awk -v w=500 '{print $1, int(($2 + $3)/(2*w))*w + w/2}' ./bed/${i}_bowtie2.fragments.bed | sort -k1,1V -k2,2n | uniq -c | awk -v OFS="\t" '{print $2, $3, $1}' |  sort -k1,1V -k2,2n > ./bed/${i}_bowtie2.fragmentsCount.bin500.bed &
     done
 
 R  
@@ -277,8 +291,8 @@ No remove duplication
 
     cat filenames | while read i; 
     do
-    bedtools genomecov -bg -i ./bed/${i}_mm10_bowtie2.fragments.bed \
-    -g /home/yangjiajun/downloads/genome/mm10_GRCm38/ucsc_fa/mm10.chrom.sizes > ./bedgraph/${i}_mm10_bowtie2.fragments.normalized.bedgraph &
+    bedtools genomecov -bg -i ./bed/${i}_bowtie2.fragments.bed \
+    -g /home/yangjiajun/downloads/genome/mm39_GRCm38/ucsc_fa/mm39.chrom.sizes > ./bedgraph/${i}_bowtie2.fragments.normalized.bedgraph &
     done
     
 Remove duplication  
@@ -290,8 +304,8 @@ Remove duplication
 
     cat filenames | while read i; 
     do
-    bedtools genomecov -bg -i ./bed/${i}_mm10_bowtie2.fragments.rmDup.bed \
-    -g /home/yangjiajun/downloads/genome/mm10_GRCm38/ucsc_fa/mm10.chrom.sizes > ./bedgraph/${i}_mm10_bowtie2.fragments.normalized.rmDup.bedgraph &
+    bedtools genomecov -bg -i ./bed/${i}_bowtie2.fragments.rmDup.bed \
+    -g /home/yangjiajun/downloads/genome/mm39_GRCm38/ucsc_fa/mm39.chrom.sizes > ./bedgraph/${i}_bowtie2.fragments.normalized.rmDup.bedgraph &
     done
 
 ## 6.1. SEACR  

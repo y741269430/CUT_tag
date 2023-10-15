@@ -109,7 +109,11 @@ for(hist in sampleList){
   dupRes = read.table(paste0(projPath, "picard_summary/", hist, "_picard.rmDup.txt"), header = TRUE, fill = TRUE)
   
   histInfo = strsplit(hist, "-")[[1]]
-  dupResult = data.frame(Name = histInfo[1], Replicate = histInfo[2], MappedFragNum_mm10 = dupRes$READ_PAIRS_EXAMINED[1] %>% as.character %>% as.numeric, DuplicationRate = dupRes$PERCENT_DUPLICATION[1] %>% as.character %>% as.numeric * 100, EstimatedLibrarySize = dupRes$ESTIMATED_LIBRARY_SIZE[1] %>% as.character %>% as.numeric) %>% mutate(UniqueFragNum = MappedFragNum_mm10 * (1-DuplicationRate/100))  %>% rbind(dupResult, .)
+  dupResult = data.frame(Name = histInfo[1], 
+                         Replicate = histInfo[2], 
+                         MappedFragNum_mm10 = dupRes$READ_PAIRS_EXAMINED[1] %>% as.character %>% as.numeric, 
+                         DuplicationRate = dupRes$PERCENT_DUPLICATION[1] %>% as.character %>% as.numeric * 100, 
+                         EstimatedLibrarySize = dupRes$ESTIMATED_LIBRARY_SIZE[1] %>% as.character %>% as.numeric) %>% mutate(UniqueFragNum = MappedFragNum_mm10 * (1-DuplicationRate/100))  %>% rbind(dupResult, .)
 }
 dupResult$Name = factor(dupResult$Name, levels = histList)
 alignDupSummary = left_join(alignSummary, dupResult, by = c("Name", "Replicate", "MappedFragNum_mm10")) %>% mutate(DuplicationRate = paste0(DuplicationRate, "%"))

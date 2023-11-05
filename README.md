@@ -315,18 +315,18 @@ The Sparse Enrichment Analysis for CUT&RUN, SEACR, package is designed to call p
 对CUT&RUN的稀疏富集分析SEACR包的设计用于从非常低的背景(即没有read覆盖的区域)的染色质中富集区域并call peaks，这是典型的CUT&Tag染色质分析实验。SEACR需要来自pairedend测序的bedGraph文件作为输入，并将峰定义为不与IgG对照数据集中描绘的背景信号块重叠的连续碱基对覆盖块。SEACR既能有效地从因子结合位点calling窄峰，也能calling出某些组蛋白修饰特征的宽域。由于我们已经使用大肠杆菌read count对片段计数进行了规范化，所以我们将SEACR的规范化选项设置为“non”。否则，建议使用“norm”。  
 
 Here, we used "0.05".  
-    
+
     vim cut6_seacr005.sh
-
+    
     #!/bin/bash
-    ## SEACR 0.05 ##
-
+    ## seacr 0.05 ##
+    
     cat filenames | while read i; 
     do
-    nohup bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/${i}_mm10_bowtie2.fragments.normalized.bedgraph \
-    0.05 norm stringent ./SEACR/${i}_005.peaks &
-    done  
-
+    bash /home/jjyang/.conda/envs/cuttag/bin/SEACR_1.3.sh \
+    ./bedgraph/${i}_bowtie2.fragments.normalized.bedgraph \
+    0.05 norm stringent ./seacr005/${i}_005.peaks &
+    done
 
 Here, we used "norm".  
 
@@ -353,20 +353,6 @@ Here, we used "norm".
     bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/NADCFA3-2_mm10_bowtie2.fragments.normalized.bedgraph \
     ./bedgraph/BCFA3-1_mm10_bowtie2.fragments.normalized.bedgraph \
     norm stringent ./SEACR/NADCFA3-2_seacr_BCFA3-1.peaks &
-
-Here, we used "0.05".  
-
-    vim cut9_seacr005.sh
-    
-    #!/bin/bash
-    ## seacr 0.05 ##
-    
-    cat filenames | while read i; 
-    do
-    bash /home/jjyang/.conda/envs/cuttag/bin/SEACR_1.3.sh \
-    ./bedgraph/${i}_bowtie2.fragments.normalized.bedgraph \
-    0.05 norm stringent ./seacr005/${i}_005.peaks &
-    done
 
 ## 7. sort index
 

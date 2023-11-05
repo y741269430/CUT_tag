@@ -354,37 +354,19 @@ Here, we used "norm".
     ./bedgraph/BCFA3-1_mm10_bowtie2.fragments.normalized.bedgraph \
     norm stringent ./SEACR/NADCFA3-2_seacr_BCFA3-1.peaks &
 
-Here, we used "0.01".  
+Here, we used "0.05".  
 
-    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CFA3-1_mm10_bowtie2.fragments.normalized.bedgraph \
-    0.01 norm stringent ./SEACR001/CFA3-1-001_seacr_control.peaks &
-
-    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CFA3-2_mm10_bowtie2.fragments.normalized.bedgraph \
-    0.01 norm stringent ./SEACR001/CFA3-2-001_seacr_control.peaks &
-
-    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CFA3-3_mm10_bowtie2.fragments.normalized.bedgraph \
-    0.01 norm stringent ./SEACR001/CFA3-3-001_seacr_control.peaks &
-
-    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CFA3-4_mm10_bowtie2.fragments.normalized.bedgraph \
-    0.01 norm stringent ./SEACR001/CFA3-4-001_seacr_control.peaks &
-
-    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/NADCFA3-1_mm10_bowtie2.fragments.normalized.bedgraph \
-    0.01 norm stringent ./SEACR001/NADCFA3-1-001_seacr_control.peaks &
-
-    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/NADCFA3-2_mm10_bowtie2.fragments.normalized.bedgraph \
-    0.01 norm stringent ./SEACR001/NADCFA3-2-001_seacr_control.peaks &
-
-    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/BNAD-1_mm10_bowtie2.fragments.normalized.bedgraph \
-    0.01 norm stringent ./SEACR001/BNAD-1-001_seacr_control.peaks &
-
-    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/BCFA3-1_mm10_bowtie2.fragments.normalized.bedgraph \
-    0.01 norm stringent ./SEACR001/BCFA3-1-001_seacr_control.peaks &
-
-    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/BCFA3-2_mm10_bowtie2.fragments.normalized.bedgraph \
-    0.01 norm stringent ./SEACR001/BCFA3-2-001_seacr_control.peaks &
-
-    bash ~/miniconda3/envs/cuttag/bin/SEACR_1.3.sh ./bedgraph/CT-0_mm10_bowtie2.fragments.normalized.bedgraph \
-    0.01 norm stringent ./SEACR001/CT-0-001_seacr_control.peaks &
+    vim cut9_seacr005.sh
+    
+    #!/bin/bash
+    ## seacr 0.05 ##
+    
+    cat filenames | while read i; 
+    do
+    bash /home/jjyang/.conda/envs/cuttag/bin/SEACR_1.3.sh \
+    ./bedgraph/${i}_bowtie2.fragments.normalized.bedgraph \
+    0.05 norm stringent ./seacr005/${i}_005.peaks &
+    done
 
 ## 7. sort index
 

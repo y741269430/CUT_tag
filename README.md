@@ -1,7 +1,7 @@
-# CUT&tag 
+# CUT&Tag 
 The pipeline were based on https://yezhengstat.github.io/CUTTag_tutorial/index.html  
 
-## 0. Build source used for CUT&tag  
+## 0. Build source used for CUT&Tag  
     
     conda create -n cuttag  
     conda activate cuttag  

@@ -1,5 +1,26 @@
 # CUT&Tag 
-The pipeline were based on https://yezhengstat.github.io/CUTTag_tutorial/index.html  
+参考：https://yezhengstat.github.io/CUTTag_tutorial/index.html    
+
+实验大概流程：      
+利用连接有刀豆蛋白 A 的磁珠结合细胞（刀豆蛋白 A 能与细胞膜或细胞核上的糖蛋白结合）；      
+使用非离子去污剂洋地黄皂苷(digitonin)使细胞膜通透，加入目标蛋白的一抗抗体（假设是鼠源）进行孵育（抗体能够通过细胞膜、核孔进入细胞核与目标蛋白结合），
+加入二抗（抗鼠）增强靶向结合能力；     
+加入pG/pA（Tn5）孵育，其中pG上源自于链球菌G族的细胞表面蛋白，而pA源自于A型金黄色葡萄球菌的细胞壁蛋白。pG/pA（Tn5）带有Tn5，同时也带有接头。pG/pA与二抗结合，把Tn5带到目标蛋白附近，切割目标蛋白附近的序列，使目标蛋白和其结合的 DNA 序列从染色质上脱离下来并游离到细胞外；       
+提取DNA，建库测序。     
+
+生信分析流程：   
+- 1.当我们数据下机之后，得到的fastq文件。使用`FastQC`软件对raw data进行质量评估。后续clean data同样需要评估。   
+- 2.使用`Trimmomatic`软件对原始数据进行质控（这一步主要是去除3’端的接头污染、去除低质量序列（保留MPAQ >= 30））。得到clean data。
+- 3.将clean data使用`bowtie2`软件与基因组进行比对，得到的sam文件使用`samtools`转换成bam。
+- 4.得到的bam文件，获取其唯一比对以及去重复reads的结果bam文件。
+- 5.使用`Deeptools`绘制TSS, Peak center 或GeneBody富集热图（依组学而定），展示数据在这些区域及前后3kb上的富集情况。
+- 6.使用`SEACR`,`MACS2`或`MACS3`进行peak calling。
+- 7.使用`IDR`软件进行样品间高可信度的峰筛选.
+- 8.将bam文件转换成bigwig文件，使用`IGV`进行可视化。
+- 9.使用r包`ChIPseeker`对peak进行注释。
+- 10.使用`homer`或`MEME`进行motif预测。
+- 11.使用`MAnorm`（无生物学重复）或`DiffBind`（有生物学重复）进行差异peak分析.
+
 
 ## 0. Build source used for CUT&Tag  
     

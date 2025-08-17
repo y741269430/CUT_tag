@@ -22,7 +22,7 @@
 - 11.使用`MAnorm`（无生物学重复）或`DiffBind`（有生物学重复）进行差异peak分析.
 
 
-## 0. Build source used for CUT&Tag  
+## 0. 创建环境         
     
     conda create -n cuttag  
     conda activate cuttag  
@@ -35,14 +35,12 @@
     conda install -c bioconda bowtie2
     conda install -c bioconda fastqc
 
-## 0. Build the bowtie2 reference genome index (mm10 and ecoil)  
-
-Execute the following command once to generate a permanently used index!  
+## 0. 利用bowtie2构建小鼠基因组（mm39）索引以及ecoil基因组索引（构建一次以后都不用做了）        
 
     cd /home/yangjiajun/downloads/genome/mm39_GRCm39/ucsc_fa/
 
     samtools faidx GRCm38.primary_assembly.genome.fa &
-    cut -f1,2 GRCm38.primary_assembly.genome.fa.fai > mm10.chrom.sizes &
+    cut -f1,2 GRCm38.primary_assembly.genome.fa.fai > mm39.chrom.sizes &
     
     nohup bowtie2-build GRCm38.primary_assembly.genome.fa \
     /home/yangjiajun/downloads/genome/mm39_GRCm39/bowtie2_idx/mm10 &  
@@ -58,13 +56,13 @@ Execute the following command once to generate a permanently used index!
 
 ----
 
-## 1. Activate the source and create the folder  
+## 1. 激活环境，创建所需文件夹           
     
     conda activate cuttag  
     
     mkdir raw clean bam mapbam bed bowtie2_summary picard_summary bedgraph SEACR fragmentLen plot trim  
     
-## 2. Write the filenames  
+## 2. 写入filenames     
     
     ls raw/*1.fq.gz |cut -d "_" -f 1 |cut -d "/" -f 2 |cut -d "-" -f 1-5 > filenames
     
@@ -110,7 +108,7 @@ ILLUMINACLIP:TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLE
 done
 ```
 
-## 3.1.1 Alignment to mm39  
+## 3.1.1 比对到mm39  
 注(报错)：Could not locate a Bowtie index corresponding to basename (下方的 ${mm39} 需要加上绝对路径(/home)而不是相对路径(~/))
     
     vim cut1_bw2.sh
@@ -129,7 +127,7 @@ done
     -S ./bam/${i}_mm39_bowtie2.sam &> ./bowtie2_summary/${i}_mm39_bowtie2.txt &
     done
 
-## 3.1.2 Alignment to spike-in genome for spike-in calibration (ecoil)   
+## 3.1.2 比对到 spike-in 基因组 (ecoil)   
 
 E. coli DNA is carried along with bacterially-produced pA-Tn5 protein and gets tagmented non-specifically during the reaction. The fraction of total reads that map to the E.coli genome depends on the yield of epitope-targeted CUT&Tag, and so depends on the number of cells used and the abundance of that epitope in chromatin. Since a constant amount of pATn5 is added to CUT&Tag reactions and brings along a fixed amount of E. coli DNA, E. coli reads can be used to normalize epitope abundance in a set of experiments.  
 
@@ -151,34 +149,33 @@ E. coli DNA is carried along with bacterially-produced pA-Tn5 protein and gets t
     -S ./bam/${i}_ecoil_bowtie2.sam &> ./bowtie2_summary/${i}_ecoil_bowtie2.txt &
     done
 
-## 3.2 Report sequencing mapping summary  
+## 3.2 比对并总结报告  
 
 Summarize the raw reads and uniquely mapping reads to report the efficiency of alignment. Alignment frequencies are expected to be >80% for high-quality data. CUT&Tag data typically has very low backgrounds, so as few as 1 million mapped fragments can give robust profiles for a histone modification in the human genome. Profiling of less-abundant transcription factors and chromatin proteins may require 10 times as many mapped fragments for downstream analysis.  
 
 总结原始reads和唯一比对reads，以报告比对的效率。对于高质量数据，比对频率预计为>80%。一般来说，CUT&Tag数据的背景非常低，因此，只需100万个比对上的片段就可以为人类基因组中的组蛋白修饰提供可靠的profiles。低丰度的转录因子和染色质蛋白的谱分析可能需要10倍于下游分析的图谱片段。  
 
-## 3.2.1 Sequencing depth  
+## 3.2.1 测序深度        
 R  
 
-## 3.2.2 Spike-in alignment  
+## 3.2.2 Spike-in 比对率    
 R  
 
-## 3.2.3 Summarize the alignment to mm10 and E.coli  
+## 3.2.3 统计 mm39 和 E.coli 的比对率  
 R  
 
-## 3.2.4 Visualizing the sequencing depth and alignment results.  
-
+## 3.2.4 可视化测序深度以及比对结果         
 R  
 
 In a typical CUT&Tag experiment targeting the abundant H3K27me3 histone modification in 65,000 K562 cells, the percentage of E. coli reads range from ~0.01% to 10%. With fewer cells or less abundant epitopes, E. coli reads can comprise as much as 70% or the total mapped reads. For IgG controls, the percentage of E. coli reads is typically much higher than that for an abundant histone modification.   
 
 在一项针对65,000个K562细胞中富集H3K27me3组蛋白修饰的CUT&Tag实验中，E.coli的reads比例在~0.01%至10%之间。如果细胞数量少或表位数量少，E.coli的reads可占总reads的70%。对于IgG对照，E.coli的reads比例通常比组蛋白修饰的要高得多。  
 
-## 3.3 Remove duplicates   
+## 3.3 是否去除重复序列        
 
-CUT&Tag integrates adapters into DNA in the vicinity of the antibody-tethered pA-Tn5, and the exact sites of integration are affected by the accessibility of surrounding DNA. For this reason fragments that share exact starting and ending positions are expected to be common, and such ‘duplicates’ may not be due to duplication during PCR. In practice, we have found that the apparent duplication rate is low for high quality CUT&Tag datasets, and even the apparent ‘duplicate’ fragments are likely to be true fragments. Thus, we do not recommend removing the duplicates. In experiments with very small amounts of material or where PCR duplication is suspected, duplicates can be removed. The following commands show how to check the duplication rate using Picard.    
+CUT&Tag integrates adapters into DNA in the vicinity of the antibody-tethered pA-Tn5, and the exact sites of integration are affected by the accessibility of surrounding DNA. For this reason fragments that share exact starting and ending positions are expected to be common, and such ‘duplicates’ may not be due to duplication during PCR. In practice, we have found that the apparent duplication rate is low for high quality CUT&Tag datasets, and even the apparent ‘duplicate’ fragments are likely to be true fragments. Thus, we do not recommend removing the duplicates. In experiments with very small amounts of material or where PCR duplication is suspected, duplicates can be removed.     
 
-CUT&Tag将adaptors整合到抗体栓系pA-Tn5附近的DNA中，并且整合的准确位置受周围DNA可及性的影响。由于这个原因，共享精确起始和结束位置的片段是常见的，而这种“duplicates”可能不是由于PCR过程中的重复。在实践中，我们发现对于高质量的CUT&Tag数据集，重复率是很低的，甚至“重复”片段也很可能是真实的片段。因此，我们不建议删除duplicates。在用非常少量的材料或怀疑是PCR重复的时候，duplicates可以被去除。下面的命令展示了如何使用Picard检查重复率。  
+因为CUT&Tag的特性，将会整合接头到pA-Tn5结合抗体周围的DNA区域中，且整合的位点受到DNA可及性的影响。所以在此因素的影响下，获取的片段有着一致的起始与终止位点是可能的，而不是因为PCR扩增的原因。在高质量的文库中，不需要进行CUT&Tag重复序列的去除，其重复率是很低的，“重复”片段也很可能是真实的片段。而当文库初始浓度、总量很少或者PCR扩增次数很多的时候，重复序列需要进行去除。所以一般推荐把重复序列去除。特别是一些检测转录因子结合信号的，一般重复序列的比例都很高，不大可能是由CUT&Tag的特性导致的，更可能的原因应该是PCR重复。    
 
     vim cut2_picard.sh
     
@@ -212,11 +209,11 @@ R
 （4）Unique fragment number is calculated by the MappedFragNum_hg38 * (1-DuplicationRate/100).  
 
 （1）在这些样本数据集中，IgG对照样本有相对较高的重复率，因为该样本中的reads来自于CUT&Tag反应中的非特异性标记。因此，在进行下游分析之前，应该将重复的IgG数据集删除。  
-（2）文库的大小是Picard根据PE重复计算出的文库中唯一分子的数量。  
-（3）估计的文库大小与靶标表位的丰度和所用抗体的质量成正比，而IgG样本的文库估计大小非常低。  
+（2）文库的大小是Picard根据PE重复计算出的文库中唯一分子的数量。    
+（3）估计的文库大小与靶标表位的丰度和所用抗体的质量成正比，而IgG样本的文库估计大小非常低。       
 （4）唯一的片段数由MappedFragNum_hg38 * (1-DuplicationRate/100)计算。  
 
-## 3.4. Assess mapped fragment size distribution  
+## 3.4. 评估比对片段大小的分布         
 
 CUT&Tag inserts adapters on either side of chromatin particles in the vicinity of the tethered enzyme, although tagmentation within chromatin particles can also occur. So, CUT&Tag reactions targeting a histone modification predominantly results in fragments that are nucleosomal lengths (~180 bp), or multiples of that length. CUT&Tag targeting transcription factors predominantly produce nucleosome-sized fragments and variable amounts of shorter fragments, from neighboring nucleosomes and the factor-bound site, respectively. Tagmentation of DNA on the surface of nucleosomes also occurs, and plotting fragment lengths with single-basepair resolution reveal a 10-bp sawtooth periodicity, which is typical of successful CUT&Tag experiments.   
 
@@ -241,10 +238,10 @@ The smaller fragments (50-100 bp) can be due to that tethered Tn5 can tagment on
 
 R  
 
-## 4.1 Filtering mapped reads by the mapping quality filtering  
+## 4.1 比对结果的过滤与格式转换       
 Nothing
 
-## 4.2 File format conversion  
+## 4.2 文件格式转换       
     
 No remove duplication  
 
@@ -290,7 +287,7 @@ Remove duplication
     cut -f 1,2,6 ./bed/${i}_bowtie2.clean.rmDup.bed | sort -k1,1 -k2,2n -k3,3n > ./bed/${i}_bowtie2.fragments.rmDup.bed &
     done
 
-## 4.3 Assess replicate reproducibility  
+## 4.3 评估重复样本的重复性       
     
     vim cut43_bin500.sh (optional)
     
@@ -305,7 +302,8 @@ Remove duplication
 
 R  
 
-## 5.1 Scaling factor   
+## 5.1 Spike-in校正      
+能进行校正的基本假设是：在一系列使用相同数量细胞的样本中，比对到E.coli基因组上reads的比例是相同的。由于这个假设，分析流程没有进行样品间和批次间的标准化，这会使得残余的E.coli DNA数量差异很大。
 
     samtools view -@ 4 -F 0x04 ./bam/CFA3-1_ecoil_bowtie2.sam | wc -l > ./bowtie2_summary/CFA3-1_ecoil_bowtie2.seqDepthDouble &
     samtools view -@ 4 -F 0x04 ./bam/CFA3-2_ecoil_bowtie2.sam | wc -l > ./bowtie2_summary/CFA3-2_ecoil_bowtie2.seqDepthDouble &
